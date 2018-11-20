@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/themeColor"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:gravity="center"
+            android:text="Speed"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/fl"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_300"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_35">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@mipmap/bar" />
+
+                <com.example.mouseracer.view.VerticalSeekBar
+                    android:id="@+id/verticalSeekBar"
+                    android:layout_width="@dimen/dp_50"
+                    android:layout_height="@dimen/dp_260"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_toRightOf="@id/fl"
+                android:text="100"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_18"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:layout_toRightOf="@id/fl"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_18"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:clickable="true" />
+
+        <com.example.mouseracer.view.BatteryView
+            android:id="@+id/horizontalBattery"
+            android:layout_width="@dimen/dp_30"
+            android:layout_height="@dimen/dp_15"
+            android:background="@color/themeColor"
+            android:gravity="center"
+            app:batteryColor="#4fa245"
+            app:batteryOrientation="horizontal"
+            app:batteryPower="50" />
+
+        <TextView
+            android:id="@+id/tvTop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/dp_30"
+            android:layout_marginRight="@dimen/dp_30"
+            android:layout_toRightOf="@id/horizontalBattery"
+            android:background="@drawable/bg_dialog_confirm"
+            android:gravity="center"
+            android:paddingLeft="@dimen/dp_20"
+            android:paddingTop="@dimen/dp_5"
+            android:paddingRight="@dimen/dp_20"
+            android:paddingBottom="@dimen/dp_5"
+            android:text="Play:Remote Control "
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTop"
+            android:layout_margin="@dimen/dp_20"
+            android:text="DERECTION"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_15" />
+
+        <RelativeLayout
+            android:layout_width="@dimen/dp_220"
+            android:layout_height="@dimen/dp_220"
+            android:layout_centerInParent="true">
+
+            <com.example.mouseracer.view.MyLinearLayout
+                android:id="@+id/lltop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ivUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/s1" />
+            </com.example.mouseracer.view.MyLinearLayout>
+
+            <com.example.mouseracer.view.MyLinearLayout
+                android:id="@+id/llbottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ivdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/x1" />
+            </com.example.mouseracer.view.MyLinearLayout>
+
+            <com.example.mouseracer.view.MyLinearLayout
+                android:id="@+id/llright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ivright"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/r1" />
+            </com.example.mouseracer.view.MyLinearLayout>
+
+            <com.example.mouseracer.view.MyLinearLayout
+                android:id="@+id/llleft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ivleft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/l1" />
+            </com.example.mouseracer.view.MyLinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_15"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/llguide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_menu"
+                android:gravity="center_vertical"
+                android:padding="@dimen/dp_5">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/user_guide" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:gravity="center"
+                    android:text="User’ Guide Guide"
+                    android:textColor="@color/themeColor"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llhome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_30"
+                android:background="@drawable/bg_menu"
+                android:gravity="center_vertical"
+                android:padding="@dimen/dp_5">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/home" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_5"
+                    android:gravity="center"
+                    android:text="Home"
+                    android:textColor="@color/themeColor"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

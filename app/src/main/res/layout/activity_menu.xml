@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/one"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/tvMenu"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@drawable/bg_menu"
+        android:gravity="center"
+        android:text="Menu"
+        android:textColor="@color/themeColor"
+        android:textSize="@dimen/sp_20"
+        android:textStyle="bold" />
+
+</RelativeLayout>
