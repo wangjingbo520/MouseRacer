@@ -1,6 +1,7 @@
 package com.example.mouseracer.ble;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,17 @@ public class BleReceiver extends BroadcastReceiver {
                     }
                 }
                 break;
+            case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                for (BluetoothStateChangedListener l : listeners) {
+                    if (l != null) {
+                        l.onConnectStatusCHnaged(device.getAddress());
+                    }
+                }
+             //   Log.e("------------>", "onReceive: " + "蓝牙已断开了" + device.getAddress() + device.getAddress());
+                break;
+            default:
+                break;
         }
     }
 
@@ -51,6 +63,16 @@ public class BleReceiver extends BroadcastReceiver {
         listeners.remove(listener);
     }
 
+    public synchronized void registerBluetoothConncetStateChangedListener(BluetoothStateChangedListener listener) {
+        checkNotNull(listener, BluetoothStateChangedListener.class);
+        listeners.add(listener);
+    }
+
+    public synchronized void unregisterBluetoothConncetStateChangedListener(BluetoothStateChangedListener listener) {
+        checkNotNull(listener, BluetoothStateChangedListener.class);
+        listeners.remove(listener);
+    }
+
     private void checkNotNull(Object object, Class<?> clasz) {
         if (object == null) {
             String claszSimpleName = clasz.getSimpleName();
@@ -60,5 +82,7 @@ public class BleReceiver extends BroadcastReceiver {
 
     public interface BluetoothStateChangedListener {
         void onBluetoothStateChanged();
+
+        void onConnectStatusCHnaged(String macAdress);
     }
 }

@@ -147,6 +147,11 @@ public class BleScanner implements BleScan<BleScanCallback>, BleReceiver.Bluetoo
     }
 
     @Override
+    public void onConnectStatusCHnaged(String macAdress) {
+
+    }
+
+    @Override
     public void destroy() {
         stopScan();
         //remove scan period delayed message

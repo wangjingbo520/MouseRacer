@@ -51,7 +51,7 @@ public class ScanMainActivity extends Activity {
 
     private void initView() {
         builder = new LoadingDialog.Builder(this);
-        builder.setMessage("Connecting Device").setCancelable(false);
+        builder.setMessage("Loading.....").setCancelable(false);
         dialog = builder.create();
         recyclerview = findViewById(R.id.recyclerview);
         swipeRefreshLayout = findViewById(R.id.swipe);
@@ -166,7 +166,6 @@ public class ScanMainActivity extends Activity {
             @Override
             public void onFinish() {
                 swipeRefreshLayout.setRefreshing(false);
-                Log.e(TAG, "scan finish");
             }
         });
     }

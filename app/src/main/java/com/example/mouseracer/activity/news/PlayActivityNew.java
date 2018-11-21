@@ -19,8 +19,10 @@ import com.example.mouseracer.activity.GuideActivity;
 import com.example.mouseracer.activity.MainActivity;
 import com.example.mouseracer.ble.BleDevice;
 import com.example.mouseracer.ble.BleManager;
+import com.example.mouseracer.ble.BleReceiver;
 import com.example.mouseracer.ble.gatt.callback.BleConnectCallback;
 import com.example.mouseracer.ble.gatt.callback.BleNotifyCallback;
+import com.example.mouseracer.ble.gatt.callback.BleRssiCallback;
 import com.example.mouseracer.ble.gatt.callback.BleWriteCallback;
 import com.example.mouseracer.util.BlueToothUtils;
 import com.example.mouseracer.util.Constants;
@@ -39,7 +41,7 @@ import static com.example.mouseracer.util.MathUtils.randomHexString;
 
 
 public class PlayActivityNew extends BaseActivity implements View.OnClickListener, VerticalSeekBar
-        .SlideChangeListener, MyLinearLayout.LinearChangeListener {
+        .SlideChangeListener, MyLinearLayout.LinearChangeListener, BleReceiver.BluetoothStateChangedListener {
     private static final String TAG = "PlayActivity";
     private VerticalSeekBar verticalSeekBar;
     private BatteryView horizontalBattery;
@@ -63,9 +65,9 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
     private MyLinearLayout llright;
     private com.example.mouseracer.ble.BleDevice device;
 
-    public static void start(Context context, com.example.mouseracer.ble.BleDevice device) {
+    public static void start(Context context, String macAdress) {
         Intent starter = new Intent(context, PlayActivityNew.class);
-        starter.putExtra("device", device);
+        starter.putExtra("macAdress", macAdress);
         context.startActivity(starter);
     }
 
@@ -98,9 +100,21 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
         llright.setOnLinearChangeListener(this);
         myMainHandler = new MyMainHandler(this);
         notifi(device);
-        //检查连接状态
-     //   myMainHandler.sendEmptyMessage(0);
+        BleReceiver.getInstance().registerBluetoothConncetStateChangedListener(this);
     }
+
+    BleRssiCallback bleRssiCallback = new BleRssiCallback() {
+        @Override
+        public void onRssi(int rssi, BleDevice bleDevice) {
+            ToastUtil.showMessage(rssi + "信号强度");
+        }
+
+        @Override
+        public void onFail(int failCode, String info, BleDevice device) {
+            ToastUtil.showMessage("failcode" + failCode + "info" + info);
+        }
+    };
+
 
     @Override
     public void onClick(View view) {
@@ -229,9 +243,22 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
     private final Runnable taskCheckConnectSatatus = new Runnable() {
         @Override
         public void run() {
+            conncetBle(device.address);
             myMainHandler.sendEmptyMessage(0);
         }
     };
+
+    @Override
+    public void onBluetoothStateChanged() {
+
+    }
+
+    @Override
+    public void onConnectStatusCHnaged(String macAdress) {
+        ToastUtil.showMessage("device is disconnceted");
+        BleManager.getInstance(this).disconnectAll();
+        conncetBle(macAdress);
+    }
 
 
     public static class MyMainHandler extends Handler {
@@ -257,7 +284,6 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
                     break;
                 case 0:
                     //每隔两秒检查连接状态
-                    mActivityReference.get().checkConnectStatus();
                     mActivityReference.get().myMainHandler.postDelayed(mActivityReference.get()
                             .taskCheckConnectSatatus, 2000);
                     break;
@@ -267,20 +293,6 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
         }
     }
 
-    private void checkConnectStatus() {
-        Log.e(TAG, "checkConnectStatus: " + "执行啦");
-        boolean connected = BleManager.getInstance(this).isConnected(device.address);
-        if (!connected) {
-            //断开连接
-            Log.e(TAG, "checkConnectStatus: "+"已经断开了" );
-            //   myMainHandler.removeCallbacks(taskCheckConnectSatatus);
-            ToastUtil.showMessage("Disconnect! Try to reconncet");
-            connect();
-        } else {
-            Log.e(TAG, "checkConnectStatus: "+"已经连接了" );
-            ToastUtil.showMessage("已经连接了");
-        }
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -315,6 +327,7 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
             myMainHandler.removeCallbacks(taskCheckConnectSatatus);
             myMainHandler.removeCallbacksAndMessages(null);
         }
+        BleReceiver.getInstance().unregisterBluetoothConncetStateChangedListener(this);
     }
 
     /*****************************bluetooth**********************************************/
@@ -325,6 +338,7 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
         BleManager.getInstance(this.getApplicationContext()).write(device, Constants.serviceUuid, Constants.writeUiid, hexStringToBytes(data), new BleWriteCallback() {
             @Override
             public void onWrite(byte[] data, com.example.mouseracer.ble.BleDevice device) {
+                //   BleManager.getInstance(PlayActivityNew.this).refreshDeviceCache(device.getDevice().getAddress());
             }
 
             @Override
@@ -353,12 +367,41 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
         });
     }
 
+    private void conncetBle(String macAdress) {
+        BleManager.getInstance(this).connect(macAdress, new BleConnectCallback() {
+            @Override
+            public void onStart(boolean startConnectSuccess, String info, BleDevice device) {
+                myMainHandler.removeCallbacks(taskCheckConnectSatatus);
+                Log.e(TAG, "onStart: " + "开始连接了");
+            }
+
+            @Override
+            public void onTimeout(BleDevice device) {
+                Toast.makeText(PlayActivityNew.this, "connect timeout!", Toast.LENGTH_SHORT).show();
+                myMainHandler.sendEmptyMessage(0);
+                Log.e(TAG, "onStart: " + "连接超时");
+            }
+
+            @Override
+            public void onConnected(BleDevice device) {
+                Log.e(TAG, "onStart: " + "连接成功");
+                renzhen(device);
+                myMainHandler.removeCallbacks(taskCheckConnectSatatus);
+            }
+
+            @Override
+            public void onDisconnected(BleDevice device) {
+                Log.e(TAG, "onStart: " + "连接失败");
+                myMainHandler.sendEmptyMessage(0);
+            }
+        });
+    }
 
     private void renzhen(BleDevice device) {
         String randomString = randomHexString(12);
         String message = "5a" + randomString + makeChecksum(randomString) + "a5";
         byte[] bytes = MathUtils.hexStringToBytes(message);
-        BleManager.getInstance(this).write(device, Constants.serviceUuid, Constants.writeUiid, bytes, new BleWriteCallback() {
+        BleManager.getInstance(PlayActivityNew.this).write(device, Constants.serviceUuid, Constants.writeUiid, bytes, new BleWriteCallback() {
             @Override
             public void onWrite(byte[] data, BleDevice device) {
 
@@ -366,36 +409,11 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
 
             @Override
             public void onFail(int failCode, String info, BleDevice device) {
-                Toast.makeText(PlayActivityNew.this, "write fail: " + info, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    private void connect() {
-        BleManager.getInstance(PlayActivityNew.this).connect(device, new BleConnectCallback() {
-            @Override
-            public void onStart(boolean startConnectSuccess, String info, BleDevice device) {
-                Log.e(TAG, "start connecting = " + startConnectSuccess + "     info: " + info);
-            }
-
-            @Override
-            public void onTimeout(BleDevice device) {
-                Toast.makeText(PlayActivityNew.this, "connect timeout!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onConnected(BleDevice device) {
-                ToastUtil.showMessage("connect sucess!");
                 renzhen(device);
-                myMainHandler.sendEmptyMessage(0);
-            }
-
-            @Override
-            public void onDisconnected(BleDevice device) {
 
             }
         });
+
     }
 
 

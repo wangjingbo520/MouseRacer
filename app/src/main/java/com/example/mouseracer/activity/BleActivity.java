@@ -46,7 +46,6 @@ public class BleActivity extends BaseActivity implements LeDeviceListAdapter.Dev
         initView();
         initBle();
     }
-
     private void initView() {
         builder = new LoadingDialog.Builder(this);
         builder.setMessage("Connecting Device").setCancelable(false);

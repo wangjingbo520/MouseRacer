@@ -25,6 +25,7 @@ import com.example.mouseracer.ble.scan.BleScanCallback;
 import com.example.mouseracer.ble.scan.BleScanner;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -58,6 +59,8 @@ public final class BleManager {
     private void registerBleReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        //intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         mContext.registerReceiver(BleReceiver.getInstance(), intentFilter);
     }
 
@@ -69,8 +72,8 @@ public final class BleManager {
                     BleManager.toggleBluetooth(true);
                     BleManager.Options options = new BleManager.Options();
                     options.loggable = true;
-                    options.scanPeriod = 3000;
-                    options.connectTimeout = 10000;
+                    options.scanPeriod = 4000;
+                    options.connectTimeout = 15000;
                     instance.option(options);
                 }
             }
@@ -416,6 +419,7 @@ public final class BleManager {
         }
     }
 
+
     private void checkBluetoothAddress(String address) {
         if (!BluetoothAdapter.checkBluetoothAddress(address)) {
             throw new IllegalArgumentException("Invalid address: " + address);
@@ -452,5 +456,21 @@ public final class BleManager {
         public UUID[] scanServiceUuids;
         public int connectTimeout = 10000;
         public boolean loggable = false;
+    }
+
+
+    public boolean refreshDeviceCache(String macAdress) {
+        if (getBluetoothGatt(macAdress) != null) {
+            try {
+                BluetoothGatt localBluetoothGatt = getBluetoothGatt(macAdress);
+                Method localMethod = localBluetoothGatt.getClass().getMethod("refresh", new Class[0]);
+                if (localMethod != null) {
+                    boolean bool = ((Boolean) localMethod.invoke(localBluetoothGatt, new Object[0])).booleanValue();
+                    return bool;
+                }
+            } catch (Exception localException) {
+            }
+        }
+        return false;
     }
 }

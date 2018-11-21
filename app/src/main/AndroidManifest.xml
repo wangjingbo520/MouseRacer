@@ -51,6 +51,9 @@
             android:name=".activity.news.PlayActivityNew2"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
+        <activity android:name=".nordic.ScanActivity" />
+        <activity android:name=".nordic.NewPlayActivity" />
+        <activity android:name=".nordic.PlayActivity"></activity>
     </application>
 
 </manifest>

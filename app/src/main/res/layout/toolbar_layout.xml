@@ -20,7 +20,6 @@
             android:src="@mipmap/back" />
     </FrameLayout>
 
-
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -28,6 +27,7 @@
         android:layout_centerInParent="true"
         android:background="@color/colorPrimary"
         android:gravity="center"
+        android:text="Device List"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_18" />
 
