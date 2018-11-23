@@ -7,7 +7,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.example.mouseracer.util.Constants;
+import com.example.mouseracer.util.MathUtils;
+import com.example.mouseracer.view.BatteryView;
 
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -15,26 +18,25 @@ import java.util.UUID;
 import no.nordicsemi.android.ble.BleManager;
 import no.nordicsemi.android.ble.Request;
 
-public class EV07BManager extends BleManager {
-
+public class NewMouseManager extends BleManager {
     final private UUID APP_SERVICE_UUID = UUID.fromString(Constants.serviceUuid);
     final private UUID APP_WRITE_CS_UUID = UUID.fromString(Constants.writeUiid);
-    final private UUID APP_NOTIFY_CS_UUID = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+    final private UUID APP_NOTIFY_CS_UUID = UUID.fromString(Constants.notifiUuid);
 
     private BluetoothGattCharacteristic appWriteCs, appNotifyCs;
 
-    private static EV07BManager ourInstance = null;
+    private static NewMouseManager ourInstance = null;
+    private byte[] bytes;
+    private BatteryView battery;
 
-
-    public static synchronized EV07BManager getInstance(final Context context) {
+    public static synchronized NewMouseManager getInstance(final Context context) {
         if (ourInstance == null) {
-            ourInstance = new EV07BManager(context);
+            ourInstance = new NewMouseManager(context);
         }
-
         return ourInstance;
     }
 
-    private EV07BManager(final Context context) {
+    private NewMouseManager(final Context context) {
         super(context);
     }
 
@@ -43,6 +45,7 @@ public class EV07BManager extends BleManager {
     protected BleManagerGattCallback getGattCallback() {
         return mGattCallback;
     }
+
 
     @Override
     protected boolean shouldAutoConnect() {
@@ -76,8 +79,30 @@ public class EV07BManager extends BleManager {
 
         @Override
         protected void onCharacteristicNotified(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            byte[] value = characteristic.getValue();
+            if (value[0] == 0x4b) {
+                //电量
+                bytes = MathUtils.hexStringToBytes(Arrays.toString(characteristic.getValue()));
+                Integer x = Integer.parseInt(String.valueOf(bytes[1]), 16);
+                if (battery != null) {
+                    battery.setPower(x * 10);
+                }
+            }
+
         }
     };
+
+    public void setBattery(BatteryView battery) {
+        this.battery = battery;
+    }
+
+
+    public void writeData(byte[] data) {
+        if (appNotifyCs == null) {
+            return;
+        }
+        writeCharacteristic(appWriteCs, data);
+    }
 
 }
 

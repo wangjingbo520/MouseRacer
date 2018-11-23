@@ -1,5 +1,6 @@
-package com.example.mouseracer.nordic;
+package com.example.mouseracer.activity;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -11,32 +12,43 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mouseracer.R;
-import com.example.mouseracer.util.ToastUtil;
+import com.example.mouseracer.nordic.NewMouseManager;
+import com.example.mouseracer.nordic.OldMouseManager;
+import com.example.mouseracer.nordic.ScannerFragment;
 
 import no.nordicsemi.android.ble.BleManagerCallbacks;
 
 public class ScanActivity extends AppCompatActivity
         implements ScannerFragment.OnDeviceSelectedListener, BleManagerCallbacks {
     public static final String TAG = "ScanActivity===》";
-    private EV07BManager bleManager;
+    private NewMouseManager bleManager;
+    private OldMouseManager oldMouseManager;
     protected static final int REQUEST_ENABLE_BT = 2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-        isBLESupported();
+        ensureBLESupported();
         if (!isBLEEnabled()) {
             showBLEDialog();
+        } else {
+            showDialog();
         }
+        bleManager = NewMouseManager.getInstance(this);
+        oldMouseManager = OldMouseManager.getInstance(this);
+        bleManager.setGattCallbacks(this);
+        oldMouseManager.setGattCallbacks(this);
+    }
+
+    private void showDialog() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.framelayout, ScannerFragment.getInstance(null))
                 .commit();
-        bleManager = EV07BManager.getInstance(this);
-        bleManager.setGattCallbacks(this);
     }
 
     protected boolean isBLEEnabled() {
@@ -50,22 +62,26 @@ public class ScanActivity extends AppCompatActivity
         startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
     }
 
-    private void isBLESupported() {
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            ToastUtil.showMessage(R.string.no_ble);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // User chose not to enable Bluetooth.
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
             finish();
+        } else if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_OK) {
+            //6、若打开，则进行扫描
+            showDialog();
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    protected boolean shouldAutoConnect() {
-        return false;
-    }
 
     @Override
     public void onDeviceSelected(BluetoothDevice device, String name) {
-        bleManager.connect(device).useAutoConnect(shouldAutoConnect())
-                .retry(3, 100)
-                .enqueue();
+        if (device.getName().equals("pets")) {
+            bleManager.connect(device);
+        } else if (device.getName().equals("Pets Hunting")) {
+            oldMouseManager.connect(device);
+        }
     }
 
     @Override
@@ -75,10 +91,11 @@ public class ScanActivity extends AppCompatActivity
 
     @Override
     public void onDeviceConnected(@NonNull BluetoothDevice device) {
-        ToastUtil.showMessage("連接成功");
-        //   PlayActivityNew.start(this, device.getAddress());
-        // bleManager.w
-
+        if (device.getName().equals("pets")) {
+            PlayActivityNew.start(this);
+        } else if (device.getName().equals("Pets Hunting")) {
+            PlayActivityOld.start(this);
+        }
     }
 
     @Override
@@ -92,9 +109,10 @@ public class ScanActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLinkLossOccurred(@NonNull BluetoothDevice device) {
-        Log.e("--------->", "onLinkLossOccurred: ");
+    public void onLinklossOccur(BluetoothDevice device) {
+
     }
+
 
     @Override
     public void onServicesDiscovered(@NonNull BluetoothDevice device, boolean optionalServicesFound) {
@@ -104,6 +122,16 @@ public class ScanActivity extends AppCompatActivity
     @Override
     public void onDeviceReady(@NonNull BluetoothDevice device) {
         Log.e("--------->", "onServicesDiscovered: ");
+    }
+
+    @Override
+    public boolean shouldEnableBatteryLevelNotifications(BluetoothDevice device) {
+        return false;
+    }
+
+    @Override
+    public void onBatteryValueReceived(BluetoothDevice device, int value) {
+
     }
 
     @Override
@@ -118,11 +146,6 @@ public class ScanActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onBondingFailed(@NonNull BluetoothDevice device) {
-        Log.e("--------->", "onServicesDiscovered: ");
-
-    }
 
     @Override
     public void onError(@NonNull BluetoothDevice device, @NonNull String message, int errorCode) {
@@ -134,5 +157,11 @@ public class ScanActivity extends AppCompatActivity
 
     }
 
+    private void ensureBLESupported() {
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.no_ble, Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
 
 }

@@ -15,8 +15,6 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.example.mouseracer.R;
-import com.example.mouseracer.ble.BleManager;
-import com.example.mouseracer.nordic.ScanActivity;
 
 import java.util.Locale;
 
@@ -134,7 +132,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
-                            BleManager.getInstance(MainActivity.this).disconnectAll();
                         }
                     }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                 @Override

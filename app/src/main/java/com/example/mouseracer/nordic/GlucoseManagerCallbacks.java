@@ -23,7 +23,9 @@ package com.example.mouseracer.nordic;
 
 import android.bluetooth.BluetoothDevice;
 
-public interface GlucoseManagerCallbacks extends BatteryManagerCallbacks {
+import no.nordicsemi.android.ble.BleManagerCallbacks;
+
+public interface GlucoseManagerCallbacks extends BleManagerCallbacks {
 
 	void onOperationStarted(final BluetoothDevice device);
 

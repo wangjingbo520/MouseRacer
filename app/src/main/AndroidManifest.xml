@@ -28,32 +28,20 @@
         </activity>
         <activity android:name=".activity.GuideActivity" />
         <activity android:name=".activity.MenuActivity" />
+
         <activity
-            android:name=".activity.BleActivity"
-            android:launchMode="singleTask" />
+            android:name=".activity.PlayActivityNew"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".activity.PlayActivityOld"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity android:name=".activity.ScanActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask" />
-        <activity
-            android:name=".activity.PlayActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.PlayActivity2"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity android:name=".activity.ScanMainActivity" />
-        <activity
-            android:name=".activity.news.PlayActivityNew"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.news.PlayActivityNew2"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity android:name=".nordic.ScanActivity" />
-        <activity android:name=".nordic.NewPlayActivity" />
-        <activity android:name=".nordic.PlayActivity"></activity>
     </application>
 
 </manifest>

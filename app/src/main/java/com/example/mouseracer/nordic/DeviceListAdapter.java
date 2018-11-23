@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mouseracer.R;
@@ -114,7 +113,7 @@ public class DeviceListAdapter extends BaseAdapter {
         final int bondedCount = mListBondedValues.size() + 1; // 1 for the title
         if (mListBondedValues.isEmpty()) {
             if (position == 0)
-                return "AVAILABLE DEVICES:";
+                return "";
             else
                 return mListValues.get(position - 1);
         } else {
@@ -187,7 +186,7 @@ public class DeviceListAdapter extends BaseAdapter {
                     final ViewHolder holder = new ViewHolder();
                     holder.name = view.findViewById(R.id.name);
                     holder.address = view.findViewById(R.id.address);
-                    holder.rssi = view.findViewById(R.id.rssi);
+                    //   holder.rssi = view.findViewById(R.id.rssi);
                     view.setTag(holder);
                 }
 
@@ -196,13 +195,13 @@ public class DeviceListAdapter extends BaseAdapter {
                 final String name = device.name;
                 holder.name.setText(name != null ? name : "n/a");
                 holder.address.setText(device.device.getAddress());
-                if (!device.isBonded || device.rssi != ExtendedBluetoothDevice.NO_RSSI) {
-                    final int rssiPercent = (int) (100.0f * (127.0f + device.rssi) / (127.0f + 20.0f));
-                    holder.rssi.setImageLevel(rssiPercent);
-                    holder.rssi.setVisibility(View.VISIBLE);
-                } else {
-                    holder.rssi.setVisibility(View.GONE);
-                }
+//                if (!device.isBonded || device.rssi != ExtendedBluetoothDevice.NO_RSSI) {
+//                    final int rssiPercent = (int) (100.0f * (127.0f + device.rssi) / (127.0f + 20.0f));
+//                    holder.rssi.setImageLevel(rssiPercent);
+//                    holder.rssi.setVisibility(View.VISIBLE);
+//                } else {
+//                    holder.rssi.setVisibility(View.GONE);
+//                }
                 break;
         }
 
@@ -212,6 +211,6 @@ public class DeviceListAdapter extends BaseAdapter {
     private class ViewHolder {
         private TextView name;
         private TextView address;
-        private ImageView rssi;
+        //    private ImageView rssi;
     }
 }
