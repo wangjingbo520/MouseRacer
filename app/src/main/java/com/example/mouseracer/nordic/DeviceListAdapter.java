@@ -75,7 +75,9 @@ public class DeviceListAdapter extends BaseAdapter {
         for (final ScanResult result : results) {
             final ExtendedBluetoothDevice device = findDevice(result);
             if (device == null) {
-                mListValues.add(new ExtendedBluetoothDevice(result));
+                if (result.getDevice().getName().equals("pets") || result.getDevice().getName().equals("Pets Hunting")) {
+                    mListValues.add(new ExtendedBluetoothDevice(result));
+                }
             } else {
                 device.name = result.getScanRecord() != null ? result.getScanRecord().getDeviceName() : null;
                 device.rssi = result.getRssi();

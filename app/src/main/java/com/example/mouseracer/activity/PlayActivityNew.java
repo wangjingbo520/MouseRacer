@@ -249,12 +249,10 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onDeviceDisconnected(BluetoothDevice device) {
-        if (!isAutoDiconncet) {
-            NewMouseManager.getInstance(this).connect(device);
-        } else {
-            NewMouseManager.getInstance(PlayActivityNew.this).close();
-            finish();
-        }
+//        if (isAutoDiconncet) {
+//            NewMouseManager.getInstance(this).connect(device);
+//        } else {
+//        }
     }
 
     @Override
@@ -345,11 +343,10 @@ public class PlayActivityNew extends BaseActivity implements View.OnClickListene
                     .setPositiveButton("sure", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            isAutoDiconncet = true;
+                            isAutoDiconncet = false;
                             myMainHandler.removeCallbacks(task);
                             NewMouseManager.getInstance(PlayActivityNew.this).disconnect();
-//                            NewMouseManager.getInstance(PlayActivityNew.this).close();
-//                            finish();
+                            finish();
                         }
                     }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                 @Override

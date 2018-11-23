@@ -74,13 +74,21 @@ public class ScanActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
     @Override
     public void onDeviceSelected(BluetoothDevice device, String name) {
         if (device.getName().equals("pets")) {
-            bleManager.connect(device);
+            if (bleManager.isConnected()) {
+                PlayActivityNew.start(this);
+            } else {
+                bleManager.connect(device);
+            }
         } else if (device.getName().equals("Pets Hunting")) {
-            oldMouseManager.connect(device);
+            if (oldMouseManager.isConnected()){
+                PlayActivityOld.start(this);
+            }else {
+                oldMouseManager.connect(device);
+            }
+
         }
     }
 
